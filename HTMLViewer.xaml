@@ -1,0 +1,8 @@
+﻿<Window x:Class="Panic.HTMLViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="HTMLViewer" Height="600" Width="300">
+    <Grid>
+        <WebBrowser Height="400" Name="myWebBrowser"></WebBrowser>
+    </Grid>
+</Window>

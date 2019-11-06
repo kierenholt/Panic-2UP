@@ -1,0 +1,123 @@
+﻿<Window x:Class="Panic.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Panic="clr-namespace:Panic"
+        xmlns:extended="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="MainWindow" Height="500" Width="900">
+
+    <!--DATACONTEXT GAMESELECTOR-->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <!--GAME SELECTION ROW 0-->
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding gameNames}" SelectedIndex="{Binding selectedIndex}" ></ComboBox>
+            <Button Command="{Binding Path=currentGame.showInstructions}">Show Instructions</Button>
+            <Button Command="{Binding Path=currentGame.restartGame}">Restart</Button>
+        </StackPanel>
+
+        <!-- GAME CONTROLS ROW 1-->
+        <Grid Grid.Row="1" DataContext="{Binding currentGame}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <StackPanel Orientation="Vertical" DockPanel.Dock="Left" >
+
+                    <!--PLAYER-->
+                    <Expander ExpandDirection="Right" IsExpanded="{Binding Path=playerSelectionVM.expanded}" Header="Players" >
+                        <StackPanel Orientation="Vertical">
+                            <!--ADD -->
+                            <TextBlock >ADD NEW PLAYER</TextBlock>
+                            <Panic:PlayerSelection DataContext="{Binding playerSelectionVM}" ></Panic:PlayerSelection>
+                            <Button Command="{Binding addPlayer}">ADD PLAYER</Button>
+
+                            <!--DELETE -->
+                            <TextBlock >CLICK TO DELETE PLAYER</TextBlock>
+                            <ListView HorizontalAlignment="Stretch" VerticalAlignment="Top" ItemsSource="{Binding players}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="2" HorizontalAlignment="Stretch"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <Button Command="{Binding Path=DataContext.deletePlayer, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="{Binding}">
+                                                <Image Source="{Binding bitmap}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill"
+                                                   Height="{Binding height}" Width="{Binding width}"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Expander>
+
+
+                    <!--EDIT AI-->
+                    <Expander ExpandDirection="Right" Header="AI">
+                        <StackPanel Orientation="Vertical">
+                            <ListView HorizontalAlignment="Stretch" VerticalAlignment="Top" ItemsSource="{Binding humanPlayers}"
+                                  SelectedItem="{Binding selectedPlayerForEdit}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="2" HorizontalAlignment="Stretch"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <Image Source="{Binding bitmap}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <DockPanel DataContext="{Binding Path=selectedPlayerForEdit}">
+                                <StackPanel  DockPanel.Dock="Bottom"  Orientation="Horizontal">
+                                    <ToggleButton IsChecked="{Binding Path=playerScriptON}" Content="{Binding Path=playerScriptONAsString}"></ToggleButton >
+                                    <Button Command="{Binding updateBehaviour}" Content="update AI"></Button>
+                                </StackPanel>
+                                <TextBox Height="Auto"  AcceptsReturn="True" FontSize="14" Text="{Binding Path=playerCodeString}"></TextBox>
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+
+
+
+                </StackPanel>
+                <!-- END OF LEFT STACK PANEL -->
+            </ScrollViewer>
+
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
+            <Grid Grid.Column="2" >
+                <!--USING GRID WITHOUT ROW DEFINITIONS SO THE ELEMENTS OVERLAP-->
+                <Image Name="gameImage" Source="{Binding bitmap, UpdateSourceTrigger=Explicit}" 
+                            Stretch="Uniform" VerticalAlignment="Stretch" ></Image>
+                <!--GAME SCREEN-->
+                <!--SCORES AT TOP OF GAME SCREEN-->
+                <ItemsControl ItemsSource="{Binding players}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding scoreOrLives}" TextElement.Foreground="{Binding brush}" TextElement.FontSize="24" TextElement.FontWeight="ExtraBold"  Margin="20,0"></TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
